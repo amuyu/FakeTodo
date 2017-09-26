@@ -14,16 +14,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.R;
+import com.amuyu.todomimic.data.Injection;
+import com.amuyu.todomimic.util.ActivityUtils;
 
 public class TasksActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
 
+    private TasksPresenter mTasksPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        Logger.d("");
         setContentView(R.layout.activity_tasks);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,6 +52,21 @@ public class TasksActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+
+        TasksFragment fragment = (TasksFragment)getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if(fragment == null) {
+            fragment = TasksFragment.newInstance();
+
+            ActivityUtils.addFragmentToActivity(
+                    getSupportFragmentManager(), fragment, R.id.contentFrame);
+        }
+
+
+        mTasksPresenter = new TasksPresenter(fragment,
+                Injection.provideGetTasks(this),
+                Injection.provideUseCaseHandler());
+
     }
 
     @Override
