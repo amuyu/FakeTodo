@@ -1,11 +1,13 @@
 package com.amuyu.todomimic.tasks;
 
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.UseCaseHandler;
+import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
 import com.amuyu.todomimic.data.Injection;
 import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.tasks.domain.model.Task;
@@ -52,6 +54,14 @@ public class TasksPresenter implements TaskContract.Presenter {
 
 
     @Override
+    public void result(int requestCode, int resultCode) {
+        if (requestCode == AddEditTaskActivity.REQUEST_ADD_TASK &&
+                resultCode == Activity.RESULT_OK) {
+            mTasksView.showSuccessfullySavedMessage();
+        }
+    }
+
+    @Override
     public void loadTasks(boolean forceUpdate) {
         loadTasks(forceUpdate, true);
     }
@@ -64,6 +74,11 @@ public class TasksPresenter implements TaskContract.Presenter {
     @Override
     public void setFiltering(TasksFilterType requestType) {
         mCurrentFiltering = requestType;
+    }
+
+    @Override
+    public void addNewTask() {
+        mTasksView.showAddTask();
     }
 
 

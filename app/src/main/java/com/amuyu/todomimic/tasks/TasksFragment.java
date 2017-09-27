@@ -1,8 +1,11 @@
 package com.amuyu.todomimic.tasks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 
 import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.R;
+import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
 import com.amuyu.todomimic.tasks.adapter.TasksAdapter;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
@@ -72,9 +76,22 @@ public class TasksFragment extends Fragment implements TaskContract.View {
         ListView listView = (ListView) root.findViewById(R.id.listView);
         listView.setAdapter(mListAdapter);
 
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.addNewTask();
+            }
+        });
+
         setHasOptionsMenu(true);
 
         return root;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.result(requestCode, resultCode);
     }
 
     @Override
@@ -118,6 +135,12 @@ public class TasksFragment extends Fragment implements TaskContract.View {
     public void setPresenter(@NonNull TaskContract.Presenter presenter) {
         Logger.d("");
         mPresenter = checkNotNull(presenter);
+    }
+
+    @Override
+    public void showAddTask() {
+        startActivityForResult(new Intent(getContext(), AddEditTaskActivity.class),
+                AddEditTaskActivity.REQUEST_ADD_TASK);
     }
 
     @Override
@@ -194,6 +217,15 @@ public class TasksFragment extends Fragment implements TaskContract.View {
         });
 
         popup.show();
+    }
+
+    @Override
+    public void showSuccessfullySavedMessage() {
+        showMessage(getString(R.string.successfully_saved_task_message));
+    }
+
+    private void showMessage(String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
     }
 
 }

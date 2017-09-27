@@ -9,6 +9,9 @@ import java.util.List;
 public interface TaskContract {
 
     interface View extends BaseView<Presenter> {
+
+        void showAddTask();
+
         void showActiveFilterLabel();
         void showTasks(List<Task> tasks);
 
@@ -20,13 +23,20 @@ public interface TaskContract {
         void showAllFilterLabel();
 
         void showFilteringPopUpMenu();
+
+        void showSuccessfullySavedMessage();
     }
 
     interface Presenter extends BasePresenter {
+
+        void result(int requestCode, int resultCode);
+
         void loadTasks(boolean forceUpdate);
 
         void clearCompletedTasks();
 
         void setFiltering(TasksFilterType requestType);
+
+        void addNewTask();
     }
 }
