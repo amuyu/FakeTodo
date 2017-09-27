@@ -17,8 +17,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class TasksAdapter extends BaseAdapter {
 
     private List<Task> mTasks;
+    private TaskItemListener mItemListener;
 
-    public TasksAdapter(List<Task> tasks) {
+    public TasksAdapter(List<Task> tasks, TaskItemListener itemListener) {
+        this.mItemListener = itemListener;
         setList(tasks);
     }
 
@@ -61,8 +63,6 @@ public class TasksAdapter extends BaseAdapter {
             holder = (ViewHolder)view.getTag();
         }
 
-
-
         final Task task = getItem(i);
         holder.titleView.setText(task.getTitleForList());
 
@@ -75,12 +75,26 @@ public class TasksAdapter extends BaseAdapter {
                     .getResources().getDrawable(R.drawable.touch_feedback));
         }
 
+        holder.completeCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!task.isCompleted()) mItemListener.onCompleteTaskClick(task);
+                else mItemListener.onActivateTaskClick(task);
+            }
+        });
+
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mItemListener.onTaskClick(task);
+            }
+        });
+
         rowView.setTag(holder);
         return rowView;
     }
 
     public class ViewHolder {
-
         TextView titleView;
         CheckBox completeCheckBox;
 
@@ -88,6 +102,15 @@ public class TasksAdapter extends BaseAdapter {
             titleView = (TextView)view.findViewById(R.id.title);
             completeCheckBox = (CheckBox)view.findViewById(R.id.complete);
         }
+    }
+
+    public interface TaskItemListener {
+
+        void onTaskClick(Task clickedTask);
+
+        void onCompleteTaskClick(Task completedTask);
+
+        void onActivateTaskClick(Task activatedTask);
     }
 
 }

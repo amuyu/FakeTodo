@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.UseCaseHandler;
+import com.amuyu.todomimic.addedittask.domain.usecase.GetTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.SaveTask;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
@@ -16,6 +17,7 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
 
     private final AddEditTaskContract.View mAddTaskView;
     private final SaveTask mSaveTask;
+    private final GetTask mGetTask;
     private final UseCaseHandler mUseCaseHandler;
 
     @Nullable
@@ -23,10 +25,12 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
 
     public AddEditTaskPresenter(@NonNull AddEditTaskContract.View addTaskView,
                                 @NonNull SaveTask saveTask,
+                                @NonNull GetTask getTask,
                                 @NonNull UseCaseHandler useCaseHandler,
                                 @NonNull String taskId) {
         this.mAddTaskView = checkNotNull(addTaskView);
         this.mSaveTask = checkNotNull(saveTask);
+        this.mGetTask = checkNotNull(getTask);
         this.mUseCaseHandler = useCaseHandler;
         this.mTaskId = taskId;
 
@@ -35,7 +39,9 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
 
     @Override
     public void start() {
-
+        if (mTaskId != null) {
+            populateTask();
+        }
     }
 
     @Override
@@ -45,12 +51,32 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
         if (isNewTask()) {
             createTask(title, description);
         } else {
-
+            updateTask(title, description);
         }
     }
 
     private boolean isNewTask() {
         return mTaskId == null;
+    }
+
+    @Override
+    public void populateTask() {
+        if (mTaskId == null) {
+            throw new RuntimeException("populateTask() was called but task is new.");
+        }
+
+        mUseCaseHandler.execute(mGetTask, new GetTask.RequestValues(mTaskId),
+                new UseCase.UseCaseCallback<GetTask.ResponseValue>() {
+                    @Override
+                    public void onSuccess(GetTask.ResponseValue response) {
+                        showTask(response.getTask());
+                    }
+
+                    @Override
+                    public void onError() {
+                        showEmptyTaskError();
+                    }
+                });
     }
 
     private void createTask(final String title, final String description) {
@@ -91,6 +117,10 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
                         showSaveError();
                     }
                 });
+    }
+
+    private void showTask(Task task) {
+        mAddTaskView.showTask(task);
     }
 
     private void showSaveError() {

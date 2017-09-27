@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.R;
 import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
+import com.amuyu.todomimic.addedittask.AddEditTaskFragment;
 import com.amuyu.todomimic.tasks.adapter.TasksAdapter;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
@@ -54,7 +55,7 @@ public class TasksFragment extends Fragment implements TaskContract.View {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mListAdapter = new TasksAdapter(new ArrayList<Task>());
+        mListAdapter = new TasksAdapter(new ArrayList<Task>(), mItemListener);
     }
 
     @Nullable
@@ -121,6 +122,26 @@ public class TasksFragment extends Fragment implements TaskContract.View {
         Logger.d("");
         mPresenter.start();
     }
+
+    /**
+     * Listener for clicks on tasks in the ListView.
+     */
+    TasksAdapter.TaskItemListener mItemListener = new TasksAdapter.TaskItemListener() {
+        @Override
+        public void onTaskClick(Task clickedTask) {
+            mPresenter.openTaskDetails(clickedTask);
+        }
+
+        @Override
+        public void onCompleteTaskClick(Task completedTask) {
+//            mPresenter.completeTask(completedTask);
+        }
+
+        @Override
+        public void onActivateTaskClick(Task activatedTask) {
+//            mPresenter.activateTask(activatedTask);
+        }
+    };
 
     private void showNoTasksViews(String mainText, int iconRes, boolean showAddView) {
         mTasksView.setVisibility(View.GONE);
@@ -222,6 +243,15 @@ public class TasksFragment extends Fragment implements TaskContract.View {
     @Override
     public void showSuccessfullySavedMessage() {
         showMessage(getString(R.string.successfully_saved_task_message));
+    }
+
+    @Override
+    public void showTaskDetailsUi(String taskId) {
+        Logger.d(""+taskId);
+        // temp
+        Intent intent = new Intent(getActivity(), AddEditTaskActivity.class);
+        intent.putExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID, taskId);
+        startActivity(intent);
     }
 
     private void showMessage(String message) {

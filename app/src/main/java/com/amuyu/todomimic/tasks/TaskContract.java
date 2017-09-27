@@ -1,5 +1,7 @@
 package com.amuyu.todomimic.tasks;
 
+import android.support.annotation.NonNull;
+
 import com.amuyu.todomimic.BasePresenter;
 import com.amuyu.todomimic.BaseView;
 import com.amuyu.todomimic.tasks.domain.model.Task;
@@ -25,6 +27,7 @@ public interface TaskContract {
         void showFilteringPopUpMenu();
 
         void showSuccessfullySavedMessage();
+        void showTaskDetailsUi(String taskId);
     }
 
     interface Presenter extends BasePresenter {
@@ -38,5 +41,7 @@ public interface TaskContract {
         void setFiltering(TasksFilterType requestType);
 
         void addNewTask();
+
+        void openTaskDetails(@NonNull Task requestedTask);
     }
 }

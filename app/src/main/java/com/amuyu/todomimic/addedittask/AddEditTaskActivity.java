@@ -52,6 +52,7 @@ public class AddEditTaskActivity extends AppCompatActivity {
 
         mPresenter = new AddEditTaskPresenter(fragment,
                 Injection.provideSaveTask(this),
+                Injection.provideGetTask(this),
                 Injection.provideUseCaseHandler(), taskId);
     }
 

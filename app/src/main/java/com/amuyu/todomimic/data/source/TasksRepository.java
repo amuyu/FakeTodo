@@ -1,6 +1,7 @@
 package com.amuyu.todomimic.data.source;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
@@ -67,6 +68,41 @@ public class TasksRepository implements TasksDataSource {
             // Query the local storage if available If not, query the network.
             getTasksFromLocalDataSource(callback);
         }
+    }
+
+    @Override
+    public void getTask(@NonNull final String taskId, @NonNull final GetTaskCallback callback) {
+        checkNotNull(taskId);
+        checkNotNull(callback);
+
+        Task cachedTask = getTaskWithId(taskId);
+
+        if (cachedTask != null) {
+            callback.onTaskLoaded(cachedTask);
+            return ;
+        }
+
+        mTasksLocalDataSource.getTask(taskId, new GetTaskCallback() {
+            @Override
+            public void onTaskLoaded(Task task) {
+                callback.onTaskLoaded(task);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                mTasksRemoteDataSource.getTask(taskId, new GetTaskCallback() {
+                    @Override
+                    public void onTaskLoaded(Task task) {
+                        callback.onTaskLoaded(task);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        callback.onDataNotAvailable();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -147,5 +183,15 @@ public class TasksRepository implements TasksDataSource {
                 callback.onDataNotAvailable();
             }
         });
+    }
+
+    @Nullable
+    private Task getTaskWithId(@NonNull String id) {
+        checkNotNull(id);
+        if (mCachedTasks == null || mCachedTasks.isEmpty()) {
+            return null;
+        } else {
+            return mCachedTasks.get(id);
+        }
     }
 }

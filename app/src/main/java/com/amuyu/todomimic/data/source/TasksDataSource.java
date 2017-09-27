@@ -14,7 +14,13 @@ public interface TasksDataSource {
         void onDataNotAvailable();
     }
 
+    interface GetTaskCallback {
+        void onTaskLoaded(Task task);
+        void onDataNotAvailable();
+    }
+
     void getTasks(@NonNull LoadTasksCallback callback);
+    void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback);
     void saveTask(@NonNull Task task);
     void deleteAllTasks();
     void refreshTasks();

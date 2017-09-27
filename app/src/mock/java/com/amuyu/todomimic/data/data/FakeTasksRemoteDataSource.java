@@ -50,6 +50,12 @@ public class FakeTasksRemoteDataSource implements TasksDataSource {
         callback.onTasksLoaded(Lists.newArrayList(TASKS_SERVICE_DATA.values()));
     }
 
+    @Override
+    public void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback) {
+        Task task = TASKS_SERVICE_DATA.get(taskId);
+        callback.onTaskLoaded(task);
+    }
+
 //    @Override
 //    public void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback) {
 //        Task task = TASKS_SERVICE_DATA.get(taskId);

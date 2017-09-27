@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.amuyu.todomimic.UseCaseHandler;
+import com.amuyu.todomimic.addedittask.domain.usecase.GetTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.SaveTask;
 import com.amuyu.todomimic.data.data.FakeTasksRemoteDataSource;
 import com.amuyu.todomimic.data.source.TasksRepository;
@@ -37,6 +38,10 @@ public class Injection {
 
     public static SaveTask provideSaveTask(@NonNull Context context) {
         return new SaveTask(provideTasksRepository(context));
+    }
+
+    public static GetTask provideGetTask(@NonNull Context context) {
+        return new GetTask(provideTasksRepository(context));
     }
 
     public static UseCaseHandler provideUseCaseHandler() {

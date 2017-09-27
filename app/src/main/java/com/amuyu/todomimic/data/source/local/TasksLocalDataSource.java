@@ -76,6 +76,48 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
+    public void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                TaskEntry.COLUMN_NAME_ENTRY_ID,
+                TaskEntry.COLUMN_NAME_TITLE,
+                TaskEntry.COLUMN_NAME_DESCRIPTION,
+                TaskEntry.COLUMN_NAME_COMPLETED
+        };
+
+        String selection = TaskEntry.COLUMN_NAME_ENTRY_ID + " LIKE ?";
+        String[] selectionArgs = { taskId };
+
+        Cursor c = db.query(
+                TaskEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+        Task task = null;
+
+        if (c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            String itemId = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_ENTRY_ID));
+            String title = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_TITLE));
+            String description =
+                    c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_DESCRIPTION));
+            boolean completed =
+                    c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_COMPLETED)) == 1;
+            task = new Task(title, description, itemId, completed);
+        }
+        if (c != null) {
+            c.close();
+        }
+
+        db.close();
+
+        if (task != null) {
+            callback.onTaskLoaded(task);
+        } else {
+            callback.onDataNotAvailable();
+        }
+    }
+
+    @Override
     public void saveTask(@NonNull Task task) {
         checkNotNull(task);
 

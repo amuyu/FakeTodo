@@ -8,7 +8,6 @@ import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.UseCaseHandler;
 import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
-import com.amuyu.todomimic.data.Injection;
 import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 import com.amuyu.todomimic.tasks.domain.usecase.GetTasks;
@@ -42,17 +41,6 @@ public class TasksPresenter implements TaskContract.Presenter {
         loadTasks(false);
     }
 
-    private void temp() {
-        mTasksView.showTasks(Injection.provideFakeTasks());
-        mTasksView.showActiveFilterLabel();
-//        showNoTasksViews(
-//                getResources().getString(R.string.no_tasks_active),
-//                R.drawable.ic_check_circle_24dp,
-//                false
-//        );
-    }
-
-
     @Override
     public void result(int requestCode, int resultCode) {
         if (requestCode == AddEditTaskActivity.REQUEST_ADD_TASK &&
@@ -79,6 +67,12 @@ public class TasksPresenter implements TaskContract.Presenter {
     @Override
     public void addNewTask() {
         mTasksView.showAddTask();
+    }
+
+    @Override
+    public void openTaskDetails(@NonNull Task requestedTask) {
+        checkNotNull(requestedTask, "requestedTask cannot be null!");
+        mTasksView.showTaskDetailsUi(requestedTask.getId());
     }
 
 
