@@ -11,6 +11,7 @@ import com.amuyu.todomimic.addedittask.domain.usecase.SaveTask;
 import com.amuyu.todomimic.data.data.FakeTasksRemoteDataSource;
 import com.amuyu.todomimic.data.source.TasksRepository;
 import com.amuyu.todomimic.data.source.local.TasksLocalDataSource;
+import com.amuyu.todomimic.tasks.domain.filter.FilterFactory;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 import com.amuyu.todomimic.tasks.domain.usecase.ActivateTask;
 import com.amuyu.todomimic.tasks.domain.usecase.CompleteTask;
@@ -36,7 +37,7 @@ public class Injection {
     }
 
     public static GetTasks provideGetTasks(@NonNull Context context) {
-        return new GetTasks(provideTasksRepository(context));
+        return new GetTasks(provideTasksRepository(context), new FilterFactory());
     }
 
     public static SaveTask provideSaveTask(@NonNull Context context) {
