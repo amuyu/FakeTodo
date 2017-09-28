@@ -14,6 +14,7 @@ import com.amuyu.todomimic.data.source.local.TasksLocalDataSource;
 import com.amuyu.todomimic.tasks.domain.filter.FilterFactory;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 import com.amuyu.todomimic.tasks.domain.usecase.ActivateTask;
+import com.amuyu.todomimic.tasks.domain.usecase.ClearCompleteTasks;
 import com.amuyu.todomimic.tasks.domain.usecase.CompleteTask;
 import com.amuyu.todomimic.tasks.domain.usecase.GetTasks;
 
@@ -57,6 +58,10 @@ public class Injection {
 
     public static DeleteTask provideDeleteTask(@NonNull Context context) {
         return new DeleteTask(provideTasksRepository(context));
+    }
+
+    public static ClearCompleteTasks provideClearCompleteTasks(@NonNull Context context) {
+        return new ClearCompleteTasks(provideTasksRepository(context));
     }
 
 

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,6 +157,23 @@ public class TasksRepository implements TasksDataSource {
     public void activateTask(@NonNull String taskId) {
         checkNotNull(taskId);
         activateTask(getTaskWithId(taskId));
+    }
+
+    @Override
+    public void clearCompletedTasks() {
+        mTasksRemoteDataSource.clearCompletedTasks();
+        mTasksLocalDataSource.clearCompletedTasks();
+
+        if (mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+
+        Iterator<Map.Entry<String, Task>> it = mCachedTasks.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Task> map = it.next();
+            if(map.getValue().isCompleted())
+                it.remove();
+        }
     }
 
     @Override

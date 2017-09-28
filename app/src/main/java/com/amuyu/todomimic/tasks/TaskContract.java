@@ -32,6 +32,8 @@ public interface TaskContract {
         void showSuccessfullySavedMessage();
         void showTaskDetailsUi(String taskId);
 
+        void showCompletedTasksCleared();
+
         void showLoadingTasksError();
     }
 

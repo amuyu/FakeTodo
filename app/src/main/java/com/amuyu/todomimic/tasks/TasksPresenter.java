@@ -11,6 +11,7 @@ import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
 import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 import com.amuyu.todomimic.tasks.domain.usecase.ActivateTask;
+import com.amuyu.todomimic.tasks.domain.usecase.ClearCompleteTasks;
 import com.amuyu.todomimic.tasks.domain.usecase.CompleteTask;
 import com.amuyu.todomimic.tasks.domain.usecase.GetTasks;
 
@@ -24,6 +25,7 @@ public class TasksPresenter implements TaskContract.Presenter {
     private final GetTasks mGetTasks;
     private final CompleteTask mCompleteTask;
     private final ActivateTask mActivateTask;
+    private final ClearCompleteTasks mClearCompleteTasks;
 
     private TasksFilterType mCurrentFiltering = TasksFilterType.ALL_TASKS;
 
@@ -34,12 +36,14 @@ public class TasksPresenter implements TaskContract.Presenter {
                           @NonNull GetTasks mGetTasks,
                           @NonNull UseCaseHandler mUseCaseHandler,
                           @NonNull CompleteTask mCompleteTask,
-                          @NonNull ActivateTask mActivateTask) {
+                          @NonNull ActivateTask mActivateTask,
+                          @NonNull ClearCompleteTasks clearCompleteTasks) {
         this.mTasksView = checkNotNull(tasksView);
         this.mGetTasks = checkNotNull(mGetTasks);
         this.mUseCaseHandler = checkNotNull(mUseCaseHandler);
         this.mCompleteTask = mCompleteTask;
         this.mActivateTask = mActivateTask;
+        this.mClearCompleteTasks = clearCompleteTasks;
 
         this.mTasksView.setPresenter(this);
     }
@@ -65,6 +69,19 @@ public class TasksPresenter implements TaskContract.Presenter {
     @Override
     public void clearCompletedTasks() {
         Logger.d("");
+        mUseCaseHandler.execute(mClearCompleteTasks, new ClearCompleteTasks.RequestValues(),
+                new UseCase.UseCaseCallback<ClearCompleteTasks.ResponseValue>() {
+                    @Override
+                    public void onSuccess(ClearCompleteTasks.ResponseValue response) {
+                        mTasksView.showCompletedTasksCleared();
+                        loadTasks(false, false);
+                    }
+
+                    @Override
+                    public void onError() {
+                        mTasksView.showLoadingTasksError();
+                    }
+                });
     }
 
     @Override

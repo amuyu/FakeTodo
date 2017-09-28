@@ -264,6 +264,11 @@ public class TasksFragment extends Fragment implements TaskContract.View {
     }
 
     @Override
+    public void showCompletedTasksCleared() {
+        showMessage(getString(R.string.completed_tasks_cleared));
+    }
+
+    @Override
     public void showLoadingTasksError() {
         showMessage(getString(R.string.loading_tasks_error));
     }

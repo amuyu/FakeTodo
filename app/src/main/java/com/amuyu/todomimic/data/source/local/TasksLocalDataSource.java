@@ -175,6 +175,18 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
+    public void clearCompletedTasks() {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String selection = TaskEntry.COLUMN_NAME_COMPLETED + " LIKE ?";
+        String[] selectionArgs = { "1" };
+
+        db.delete(TaskEntry.TABLE_NAME, selection, selectionArgs);
+
+        db.close();
+    }
+
+    @Override
     public void deleteAllTasks() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(TaskEntry.TABLE_NAME, null, null);

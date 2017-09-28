@@ -26,6 +26,7 @@ public interface TasksDataSource {
     void completeTask(@NonNull String taskId);
     void activateTask(@NonNull Task task);
     void activateTask(@NonNull String taskId);
+    void clearCompletedTasks();
     void deleteAllTasks();
     void deleteTask(@NonNull String taskId);
     void refreshTasks();

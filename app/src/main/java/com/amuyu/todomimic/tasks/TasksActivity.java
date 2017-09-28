@@ -54,7 +54,8 @@ public class TasksActivity extends AppCompatActivity {
                 Injection.provideGetTasks(this),
                 Injection.provideUseCaseHandler(),
                 Injection.provideCompleteTask(this),
-                Injection.provideActivateTask(this));
+                Injection.provideActivateTask(this),
+                Injection.provideClearCompleteTasks(this));
 
     }
 

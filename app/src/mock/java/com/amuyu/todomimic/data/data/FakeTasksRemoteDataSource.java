@@ -23,6 +23,7 @@ import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 import com.google.common.collect.Lists;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -87,6 +88,16 @@ public class FakeTasksRemoteDataSource implements TasksDataSource {
     @Override
     public void activateTask(@NonNull String taskId) {
         //
+    }
+
+    @Override
+    public void clearCompletedTasks() {
+        Iterator<Map.Entry<String, Task>> it = TASKS_SERVICE_DATA.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Task> map = it.next();
+            if (map.getValue().isCompleted())
+                it.remove();
+        }
     }
 
 //    @Override
