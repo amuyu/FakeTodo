@@ -10,6 +10,8 @@ import com.amuyu.todomimic.UseCaseHandler;
 import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
 import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.tasks.domain.model.Task;
+import com.amuyu.todomimic.tasks.domain.usecase.ActivateTask;
+import com.amuyu.todomimic.tasks.domain.usecase.CompleteTask;
 import com.amuyu.todomimic.tasks.domain.usecase.GetTasks;
 
 import java.util.List;
@@ -20,6 +22,8 @@ public class TasksPresenter implements TaskContract.Presenter {
 
     private final TaskContract.View mTasksView;
     private final GetTasks mGetTasks;
+    private final CompleteTask mCompleteTask;
+    private final ActivateTask mActivateTask;
 
     private TasksFilterType mCurrentFiltering = TasksFilterType.ALL_TASKS;
 
@@ -28,10 +32,14 @@ public class TasksPresenter implements TaskContract.Presenter {
 
     public TasksPresenter(@NonNull TaskContract.View tasksView,
                           @NonNull GetTasks mGetTasks,
-                          @NonNull UseCaseHandler mUseCaseHandler) {
+                          @NonNull UseCaseHandler mUseCaseHandler,
+                          @NonNull CompleteTask mCompleteTask,
+                          @NonNull ActivateTask mActivateTask) {
         this.mTasksView = checkNotNull(tasksView);
         this.mGetTasks = checkNotNull(mGetTasks);
         this.mUseCaseHandler = checkNotNull(mUseCaseHandler);
+        this.mCompleteTask = mCompleteTask;
+        this.mActivateTask = mActivateTask;
 
         this.mTasksView.setPresenter(this);
     }
@@ -73,6 +81,42 @@ public class TasksPresenter implements TaskContract.Presenter {
     public void openTaskDetails(@NonNull Task requestedTask) {
         checkNotNull(requestedTask, "requestedTask cannot be null!");
         mTasksView.showTaskDetailsUi(requestedTask.getId());
+    }
+
+    @Override
+    public void completeTask(@NonNull Task completedTask) {
+        checkNotNull(completedTask, "completedTask cannot be null!");
+        mUseCaseHandler.execute(mCompleteTask, new CompleteTask.RequestValues(completedTask.getId()),
+                new UseCase.UseCaseCallback<CompleteTask.ResponseValue>() {
+                    @Override
+                    public void onSuccess(CompleteTask.ResponseValue response) {
+                        mTasksView.showTaskMarkedComplete();
+                        loadTasks(false, false);
+                    }
+
+                    @Override
+                    public void onError() {
+                        mTasksView.showLoadingTasksError();
+                    }
+                });
+    }
+
+    @Override
+    public void activateTask(@NonNull Task activeTask) {
+        checkNotNull(activeTask, "completedTask cannot be null!");
+        mUseCaseHandler.execute(mActivateTask, new ActivateTask.RequestValues(activeTask.getId()),
+                new UseCase.UseCaseCallback<ActivateTask.ResponseValue>() {
+                    @Override
+                    public void onSuccess(ActivateTask.ResponseValue response) {
+                        mTasksView.showTaskMarkedActive();
+                        loadTasks(false, false);
+                    }
+
+                    @Override
+                    public void onError() {
+                        mTasksView.showLoadingTasksError();
+                    }
+                });
     }
 
 

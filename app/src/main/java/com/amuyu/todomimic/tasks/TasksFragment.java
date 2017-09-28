@@ -134,12 +134,12 @@ public class TasksFragment extends Fragment implements TaskContract.View {
 
         @Override
         public void onCompleteTaskClick(Task completedTask) {
-//            mPresenter.completeTask(completedTask);
+            mPresenter.completeTask(completedTask);
         }
 
         @Override
         public void onActivateTaskClick(Task activatedTask) {
-//            mPresenter.activateTask(activatedTask);
+            mPresenter.activateTask(activatedTask);
         }
     };
 
@@ -175,6 +175,16 @@ public class TasksFragment extends Fragment implements TaskContract.View {
 
         mTasksView.setVisibility(View.VISIBLE);
         mNoTasksView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showTaskMarkedComplete() {
+        showMessage(getString(R.string.task_marked_complete));
+    }
+
+    @Override
+    public void showTaskMarkedActive() {
+        showMessage(getString(R.string.task_marked_active));
     }
 
     @Override
@@ -251,6 +261,11 @@ public class TasksFragment extends Fragment implements TaskContract.View {
         Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
         intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskId);
         startActivity(intent);
+    }
+
+    @Override
+    public void showLoadingTasksError() {
+        showMessage(getString(R.string.loading_tasks_error));
     }
 
     private void showMessage(String message) {

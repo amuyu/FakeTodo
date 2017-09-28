@@ -17,6 +17,9 @@ public interface TaskContract {
         void showActiveFilterLabel();
         void showTasks(List<Task> tasks);
 
+        void showTaskMarkedComplete();
+        void showTaskMarkedActive();
+
         void showNoTasks();
         void showNoActiveTasks();
         void showNoCompletedTasks();
@@ -28,6 +31,8 @@ public interface TaskContract {
 
         void showSuccessfullySavedMessage();
         void showTaskDetailsUi(String taskId);
+
+        void showLoadingTasksError();
     }
 
     interface Presenter extends BasePresenter {
@@ -43,5 +48,9 @@ public interface TaskContract {
         void addNewTask();
 
         void openTaskDetails(@NonNull Task requestedTask);
+
+        void completeTask(@NonNull Task completedTask);
+
+        void activateTask(@NonNull Task activeTask);
     }
 }
