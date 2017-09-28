@@ -119,6 +119,46 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
+    public void completeTask(@NonNull Task task) {
+        checkNotNull(task);
+        mTasksRemoteDataSource.completeTask(task);
+        mTasksLocalDataSource.completeTask(task);
+
+        Task completedTask = new Task(task.getTitle(), task.getDescription(), task.getId(), true);
+
+        if (mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+        mCachedTasks.put(task.getId(), completedTask);
+    }
+
+    @Override
+    public void completeTask(@NonNull String taskId) {
+        checkNotNull(taskId);
+        completeTask(getTaskWithId(taskId));
+    }
+
+    @Override
+    public void activateTask(@NonNull Task task) {
+        checkNotNull(task);
+        mTasksRemoteDataSource.activateTask(task);
+        mTasksLocalDataSource.activateTask(task);
+
+        Task activateTask = new Task(task.getTitle(), task.getDescription(), task.getId());
+
+        if (mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+        mCachedTasks.put(task.getId(), activateTask);
+    }
+
+    @Override
+    public void activateTask(@NonNull String taskId) {
+        checkNotNull(taskId);
+        activateTask(getTaskWithId(taskId));
+    }
+
+    @Override
     public void deleteAllTasks() {
         mTasksLocalDataSource.deleteAllTasks();
         mTasksRemoteDataSource.deleteAllTasks();
@@ -127,6 +167,14 @@ public class TasksRepository implements TasksDataSource {
             mCachedTasks = new LinkedHashMap<>();
         }
         mCachedTasks.clear();
+    }
+
+    @Override
+    public void deleteTask(@NonNull String taskId) {
+        mTasksRemoteDataSource.deleteTask(taskId);
+        mTasksLocalDataSource.deleteTask(taskId);
+
+        mCachedTasks.remove(taskId);
     }
 
     @Override

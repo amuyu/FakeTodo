@@ -22,6 +22,11 @@ public interface TasksDataSource {
     void getTasks(@NonNull LoadTasksCallback callback);
     void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback);
     void saveTask(@NonNull Task task);
+    void completeTask(@NonNull Task task);
+    void completeTask(@NonNull String taskId);
+    void activateTask(@NonNull Task task);
+    void activateTask(@NonNull String taskId);
     void deleteAllTasks();
+    void deleteTask(@NonNull String taskId);
     void refreshTasks();
 }

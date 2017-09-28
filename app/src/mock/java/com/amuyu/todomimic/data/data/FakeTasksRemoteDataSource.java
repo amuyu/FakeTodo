@@ -67,6 +67,28 @@ public class FakeTasksRemoteDataSource implements TasksDataSource {
         TASKS_SERVICE_DATA.put(task.getId(), task);
     }
 
+    @Override
+    public void completeTask(@NonNull Task task) {
+        Task completedTask = new Task(task.getTitle(), task.getDescription(), task.getId(), true);
+        TASKS_SERVICE_DATA.put(task.getId(), completedTask);
+    }
+
+    @Override
+    public void completeTask(@NonNull String taskId) {
+        //
+    }
+
+    @Override
+    public void activateTask(@NonNull Task task) {
+        Task activeTask = new Task(task.getTitle(), task.getDescription(), task.getId());
+        TASKS_SERVICE_DATA.put(task.getId(), activeTask);
+    }
+
+    @Override
+    public void activateTask(@NonNull String taskId) {
+        //
+    }
+
 //    @Override
 //    public void completeTask(@NonNull Task task) {
 //        Task completedTask = new Task(task.getTitle(), task.getDescription(), task.getId(), true);
@@ -105,15 +127,17 @@ public class FakeTasksRemoteDataSource implements TasksDataSource {
         // tasks from all the available data sources.
     }
 
-//    @Override
-//    public void deleteTask(@NonNull String taskId) {
-//        TASKS_SERVICE_DATA.remove(taskId);
-//    }
+    @Override
+    public void deleteTask(@NonNull String taskId) {
+        TASKS_SERVICE_DATA.remove(taskId);
+    }
 
     @Override
     public void deleteAllTasks() {
         TASKS_SERVICE_DATA.clear();
     }
+
+
 
     @VisibleForTesting
     public void addTasks(Task... tasks) {

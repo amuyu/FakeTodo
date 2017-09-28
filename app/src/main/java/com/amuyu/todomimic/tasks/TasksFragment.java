@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.R;
 import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
-import com.amuyu.todomimic.addedittask.AddEditTaskFragment;
+import com.amuyu.todomimic.taskdetail.TaskDetailActivity;
 import com.amuyu.todomimic.tasks.adapter.TasksAdapter;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
@@ -248,9 +248,8 @@ public class TasksFragment extends Fragment implements TaskContract.View {
     @Override
     public void showTaskDetailsUi(String taskId) {
         Logger.d(""+taskId);
-        // temp
-        Intent intent = new Intent(getActivity(), AddEditTaskActivity.class);
-        intent.putExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID, taskId);
+        Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
+        intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskId);
         startActivity(intent);
     }
 

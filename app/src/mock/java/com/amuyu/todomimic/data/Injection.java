@@ -5,12 +5,15 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.amuyu.todomimic.UseCaseHandler;
+import com.amuyu.todomimic.addedittask.domain.usecase.DeleteTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.GetTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.SaveTask;
 import com.amuyu.todomimic.data.data.FakeTasksRemoteDataSource;
 import com.amuyu.todomimic.data.source.TasksRepository;
 import com.amuyu.todomimic.data.source.local.TasksLocalDataSource;
 import com.amuyu.todomimic.tasks.domain.model.Task;
+import com.amuyu.todomimic.tasks.domain.usecase.ActivateTask;
+import com.amuyu.todomimic.tasks.domain.usecase.CompleteTask;
 import com.amuyu.todomimic.tasks.domain.usecase.GetTasks;
 
 import java.util.ArrayList;
@@ -43,6 +46,18 @@ public class Injection {
     public static GetTask provideGetTask(@NonNull Context context) {
         return new GetTask(provideTasksRepository(context));
     }
+    public static CompleteTask provideCompleteTask(@NonNull Context context) {
+        return new CompleteTask(provideTasksRepository(context));
+    }
+
+    public static ActivateTask provideActivateTask(@NonNull Context context) {
+        return new ActivateTask(provideTasksRepository(context));
+    }
+
+    public static DeleteTask provideDeleteTask(@NonNull Context context) {
+        return new DeleteTask(provideTasksRepository(context));
+    }
+
 
     public static UseCaseHandler provideUseCaseHandler() {
         return UseCaseHandler.getInstance();

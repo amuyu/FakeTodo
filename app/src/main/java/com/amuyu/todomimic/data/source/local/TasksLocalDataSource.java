@@ -135,9 +135,60 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
+    public void completeTask(@NonNull Task task) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TaskEntry.COLUMN_NAME_COMPLETED, true);
+
+        String selection = TaskEntry.COLUMN_NAME_ENTRY_ID + " LIKE ?";
+        String[] selectionArgs = { task.getId() };
+
+        db.update(TaskEntry.TABLE_NAME, values, selection, selectionArgs);
+        db.close();
+    }
+
+    @Override
+    public void completeTask(@NonNull String taskId) {
+        // Not required for the local data source because the {@link TasksRepository} handles
+        // converting from a {@code taskId} to a {@link task} using its cached data.
+    }
+
+    @Override
+    public void activateTask(@NonNull Task task) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TaskEntry.COLUMN_NAME_COMPLETED, false);
+
+        String selection = TaskEntry.COLUMN_NAME_ENTRY_ID + " LIKE ?";
+        String[] selectionArgs = { task.getId() };
+
+        db.update(TaskEntry.TABLE_NAME, values, selection, selectionArgs);
+        db.close();
+    }
+
+    @Override
+    public void activateTask(@NonNull String taskId) {
+        // Not required for the local data source because the {@link TasksRepository} handles
+        // converting from a {@code taskId} to a {@link task} using its cached data.
+    }
+
+    @Override
     public void deleteAllTasks() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(TaskEntry.TABLE_NAME, null, null);
+        db.close();
+    }
+
+    @Override
+    public void deleteTask(@NonNull String taskId) {
+
+        String selection = TaskEntry.COLUMN_NAME_ENTRY_ID + " LIKE ?";
+        String[] selectionArgs = { taskId };
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.delete(TaskEntry.TABLE_NAME, selection, selectionArgs);
         db.close();
     }
 
