@@ -7,6 +7,8 @@ import com.amuyu.todomimic.tasks.domain.model.Task;
 
 import java.util.List;
 
+import rx.Observable;
+
 public interface TasksDataSource {
 
     interface LoadTasksCallback {
@@ -19,8 +21,8 @@ public interface TasksDataSource {
         void onDataNotAvailable();
     }
 
-    void getTasks(@NonNull LoadTasksCallback callback);
-    void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback);
+    Observable<List<Task>> getTasks();
+    Observable<Task> getTask(@NonNull String taskId);
     void saveTask(@NonNull Task task);
     void completeTask(@NonNull Task task);
     void completeTask(@NonNull String taskId);

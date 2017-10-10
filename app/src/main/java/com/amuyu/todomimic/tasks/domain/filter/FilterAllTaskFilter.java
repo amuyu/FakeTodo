@@ -11,4 +11,9 @@ public class FilterAllTaskFilter implements TaskFilter{
     public List<Task> filter(List<Task> tasks) {
         return new ArrayList<>(tasks);
     }
+
+    @Override
+    public Boolean filter(Task task) {
+        return true;
+    }
 }

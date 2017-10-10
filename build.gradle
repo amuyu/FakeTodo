@@ -10,7 +10,9 @@ buildscript {
             'supportLibrary':'26.1.0',
             'constraintLayout':'1.0.2',
             'guava':'18.0',
-            'logger':'1.1.0'
+            'logger':'1.1.0',
+            'rxjava':'1.1.8',
+            'rxandroid':'1.2.1'
     ]
     repositories {
         google()

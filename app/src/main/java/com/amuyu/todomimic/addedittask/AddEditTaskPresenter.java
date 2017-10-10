@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.amuyu.logger.Logger;
-import com.amuyu.todomimic.UseCase;
-import com.amuyu.todomimic.UseCaseHandler;
 import com.amuyu.todomimic.addedittask.domain.usecase.GetTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.SaveTask;
 import com.amuyu.todomimic.tasks.domain.model.Task;
@@ -18,7 +16,6 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
     private final AddEditTaskContract.View mAddTaskView;
     private final SaveTask mSaveTask;
     private final GetTask mGetTask;
-    private final UseCaseHandler mUseCaseHandler;
 
     @Nullable
     private String mTaskId;
@@ -26,12 +23,10 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
     public AddEditTaskPresenter(@NonNull AddEditTaskContract.View addTaskView,
                                 @NonNull SaveTask saveTask,
                                 @NonNull GetTask getTask,
-                                @NonNull UseCaseHandler useCaseHandler,
                                 @NonNull String taskId) {
         this.mAddTaskView = checkNotNull(addTaskView);
         this.mSaveTask = checkNotNull(saveTask);
         this.mGetTask = checkNotNull(getTask);
-        this.mUseCaseHandler = useCaseHandler;
         this.mTaskId = taskId;
 
         mAddTaskView.setPresenter(this);
@@ -61,22 +56,13 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
 
     @Override
     public void populateTask() {
+        Logger.d("");
         if (mTaskId == null) {
             throw new RuntimeException("populateTask() was called but task is new.");
         }
 
-        mUseCaseHandler.execute(mGetTask, new GetTask.RequestValues(mTaskId),
-                new UseCase.UseCaseCallback<GetTask.ResponseValue>() {
-                    @Override
-                    public void onSuccess(GetTask.ResponseValue response) {
-                        showTask(response.getTask());
-                    }
-
-                    @Override
-                    public void onError() {
-                        showEmptyTaskError();
-                    }
-                });
+        mGetTask.execute(new GetTask.RequestValues(mTaskId))
+                .subscribe(responseValue -> showTask(responseValue.getTask()));
     }
 
     private void createTask(final String title, final String description) {
@@ -85,17 +71,10 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
             mAddTaskView.showEmptyTaskError();
         } else {
             SaveTask.RequestValues values = new SaveTask.RequestValues(newTask);
-            mUseCaseHandler.execute(mSaveTask, values, new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
-                @Override
-                public void onSuccess(SaveTask.ResponseValue response) {
-                    mAddTaskView.showTasksList();
-                }
-
-                @Override
-                public void onError() {
-                    showSaveError();
-                }
-            });
+            mSaveTask.execute(values)
+                    .subscribe(responseValue -> {
+                        mAddTaskView.showTasksList();
+                    });
         }
     }
 
@@ -105,17 +84,11 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
         }
 
         Task newTask = new Task(title ,description, mTaskId);
-        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
-                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
-                    @Override
-                    public void onSuccess(SaveTask.ResponseValue response) {
-                        mAddTaskView.showTasksList();
-                    }
-
-                    @Override
-                    public void onError() {
-                        showSaveError();
-                    }
+        mSaveTask.execute(new SaveTask.RequestValues(newTask))
+                .subscribe(responseValue -> {
+                    mAddTaskView.showTasksList();
+                }, error -> {
+                    showSaveError();
                 });
     }
 

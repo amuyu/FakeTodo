@@ -43,7 +43,6 @@ public class TaskDetailActivity extends AppCompatActivity {
         }
 
         mPresenter = new TaskDetailPresenter(taskDetailFragment,
-                                            Injection.provideUseCaseHandler(),
                                             Injection.provideGetTask(this),
                                             Injection.provideCompleteTask(this),
                                             Injection.provideActivateTask(this),

@@ -30,6 +30,10 @@ android {
 
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -44,6 +48,8 @@ dependencies {
     implementation "com.google.guava:guava:$versions.guava"
     implementation "com.amuyu:logger:$versions.logger"
 
+    compile "io.reactivex:rxjava:$versions.rxjava"
+    compile "io.reactivex:rxandroid:$versions.rxandroid"
 
 
     testImplementation 'junit:junit:4.12'

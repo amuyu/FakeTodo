@@ -18,4 +18,9 @@ public class ActivateTaskFilter implements TaskFilter {
         }
         return filteredTasks;
     }
+
+    @Override
+    public Boolean filter(Task task) {
+        return task.isActive();
+    }
 }

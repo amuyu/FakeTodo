@@ -17,4 +17,9 @@ public class CompleteTaskFilter implements TaskFilter {
         }
         return completedTasks;
     }
+
+    @Override
+    public Boolean filter(Task task) {
+        return task.isCompleted();
+    }
 }

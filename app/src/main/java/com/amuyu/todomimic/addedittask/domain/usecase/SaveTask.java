@@ -6,6 +6,9 @@ import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.data.source.TasksRepository;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
@@ -17,15 +20,14 @@ public class SaveTask extends UseCase<SaveTask.RequestValues, SaveTask.ResponseV
         this.mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null");
     }
 
+
     @Override
-    protected void executeUseCase(RequestValues requestValues) {
-        Task task = requestValues.getTask();
+    public Observable<ResponseValue> execute(RequestValues values) {
+        Task task = values.getTask();
         mTasksRepository.saveTask(task);
-
-        getUseCaseCallback().onSuccess(new ResponseValue(task));
+        return Observable.just(new ResponseValue(task))
+                .observeOn(AndroidSchedulers.mainThread());
     }
-
-
 
 
     public static final class RequestValues implements UseCase.RequestValues {

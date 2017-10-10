@@ -3,9 +3,12 @@ package com.amuyu.todomimic.addedittask.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.amuyu.todomimic.UseCase;
-import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.data.source.TasksRepository;
 import com.amuyu.todomimic.tasks.domain.model.Task;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,22 +21,11 @@ public class GetTask extends UseCase<GetTask.RequestValues, GetTask.ResponseValu
         mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null!");
     }
 
-
-    @Override
-    protected void executeUseCase(RequestValues requestValues) {
-        String taskId = requestValues.getTaskId();
-        mTasksRepository.getTask(taskId, new TasksDataSource.GetTaskCallback() {
-            @Override
-            public void onTaskLoaded(Task task) {
-                ResponseValue responseValue = new ResponseValue(task);
-                getUseCaseCallback().onSuccess(responseValue);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                getUseCaseCallback().onError();
-            }
-        });
+    public Observable<ResponseValue> execute(final RequestValues values) {
+        return mTasksRepository.getTask(values.getTaskId())
+                .map(task -> new ResponseValue(task))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
 

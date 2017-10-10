@@ -4,7 +4,6 @@ package com.amuyu.todomimic.data;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.amuyu.todomimic.UseCaseHandler;
 import com.amuyu.todomimic.addedittask.domain.usecase.DeleteTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.GetTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.SaveTask;
@@ -62,10 +61,5 @@ public class Injection {
 
     public static ClearCompleteTasks provideClearCompleteTasks(@NonNull Context context) {
         return new ClearCompleteTasks(provideTasksRepository(context));
-    }
-
-
-    public static UseCaseHandler provideUseCaseHandler() {
-        return UseCaseHandler.getInstance();
     }
 }

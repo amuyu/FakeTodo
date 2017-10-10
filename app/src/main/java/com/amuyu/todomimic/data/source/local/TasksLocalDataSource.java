@@ -14,6 +14,8 @@ import com.amuyu.todomimic.tasks.domain.model.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
@@ -33,8 +35,7 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void getTasks(@NonNull LoadTasksCallback callback) {
-        checkNotNull(callback);
+    public Observable<List<Task>> getTasks() {
         List<Task> tasks = new ArrayList<>();
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -67,16 +68,12 @@ public class TasksLocalDataSource implements TasksDataSource {
 
         db.close();
 
-        if (tasks.isEmpty()) {
-            callback.onDataNotAvailable();
-        } else {
-            callback.onTasksLoaded(tasks);
-        }
-
+        return Observable.just(tasks);
     }
 
+
     @Override
-    public void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback) {
+    public Observable<Task> getTask(@NonNull String taskId) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
@@ -110,11 +107,7 @@ public class TasksLocalDataSource implements TasksDataSource {
 
         db.close();
 
-        if (task != null) {
-            callback.onTaskLoaded(task);
-        } else {
-            callback.onDataNotAvailable();
-        }
+        return Observable.just(task);
     }
 
     @Override

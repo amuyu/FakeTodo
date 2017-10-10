@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.data.source.TasksRepository;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ActivateTask extends UseCase<ActivateTask.RequestValues, ActivateTask.ResponseValue> {
@@ -17,10 +20,12 @@ public class ActivateTask extends UseCase<ActivateTask.RequestValues, ActivateTa
     }
 
     @Override
-    protected void executeUseCase(RequestValues requestValues) {
-        mTasksRepository.activateTask(requestValues.getActivateTask());
-        getUseCaseCallback().onSuccess(new ResponseValue());
+    public Observable<ResponseValue> execute(RequestValues values) {
+        mTasksRepository.activateTask(values.getActivateTask());
+        return Observable.just(new ResponseValue())
+                .observeOn(AndroidSchedulers.mainThread());
     }
+
 
     public static final class RequestValues implements UseCase.RequestValues {
 

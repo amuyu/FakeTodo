@@ -4,7 +4,6 @@ package com.amuyu.todomimic.tasks.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.amuyu.todomimic.UseCase;
-import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.data.source.TasksRepository;
 import com.amuyu.todomimic.tasks.TasksFilterType;
 import com.amuyu.todomimic.tasks.domain.filter.FilterFactory;
@@ -12,6 +11,10 @@ import com.amuyu.todomimic.tasks.domain.filter.TaskFilter;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
 import java.util.List;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,28 +29,21 @@ public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseV
     }
 
     @Override
-    protected void executeUseCase(final RequestValues values) {
+    public Observable<ResponseValue> execute(final RequestValues values) {
         if(values.isForceUpdate()) {
             mTasksRepository.refreshTasks();
         }
 
-        mTasksRepository.getTasks(new TasksDataSource.LoadTasksCallback() {
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-
-                TaskFilter taskFilter = mFilterFactory.create(values.getCurrentFiltering());
-                List<Task> tasksFiltered = taskFilter.filter(tasks);
-
-                ResponseValue responseValue = new ResponseValue(tasksFiltered);
-                getUseCaseCallback().onSuccess(responseValue);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                getUseCaseCallback().onError();
-            }
-        });
+        TaskFilter taskFilter = mFilterFactory.create(values.getCurrentFiltering());
+        return mTasksRepository.getTasks()
+                .flatMap(tasks -> Observable.from(tasks))
+                .filter(task -> taskFilter.filter(task)).toList()
+                .map(tasks -> new ResponseValue(tasks))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
     }
+
+
 
     public static final class RequestValues implements UseCase.RequestValues {
 

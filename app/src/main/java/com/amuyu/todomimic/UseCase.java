@@ -16,6 +16,8 @@
 
 package com.amuyu.todomimic;
 
+import rx.Observable;
+
 /**
  * Use cases are the entry points to the domain layer.
  *
@@ -26,8 +28,6 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
 
     private Q mRequestValues;
 
-    private UseCaseCallback<P> mUseCaseCallback;
-
     public void setRequestValues(Q requestValues) {
         mRequestValues = requestValues;
     }
@@ -36,19 +36,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
         return mRequestValues;
     }
 
-    public UseCaseCallback<P> getUseCaseCallback() {
-        return mUseCaseCallback;
-    }
-
-    public void setUseCaseCallback(UseCaseCallback<P> useCaseCallback) {
-        mUseCaseCallback = useCaseCallback;
-    }
-
-    void run() {
-       executeUseCase(mRequestValues);
-    }
-
-    protected abstract void executeUseCase(Q requestValues);
+    abstract public Observable<P> execute(final Q values);
 
     /**
      * Data passed to a request.
@@ -62,8 +50,5 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
     public interface ResponseValue {
     }
 
-    public interface UseCaseCallback<R> {
-        void onSuccess(R response);
-        void onError();
-    }
+
 }

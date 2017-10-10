@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import com.amuyu.logger.Logger;
-import com.amuyu.todomimic.UseCase;
-import com.amuyu.todomimic.UseCaseHandler;
 import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
 import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.tasks.domain.model.Task;
@@ -30,17 +28,13 @@ public class TasksPresenter implements TaskContract.Presenter {
     private TasksFilterType mCurrentFiltering = TasksFilterType.ALL_TASKS;
 
 
-    private final UseCaseHandler mUseCaseHandler;
-
     public TasksPresenter(@NonNull TaskContract.View tasksView,
                           @NonNull GetTasks mGetTasks,
-                          @NonNull UseCaseHandler mUseCaseHandler,
                           @NonNull CompleteTask mCompleteTask,
                           @NonNull ActivateTask mActivateTask,
                           @NonNull ClearCompleteTasks clearCompleteTasks) {
         this.mTasksView = checkNotNull(tasksView);
         this.mGetTasks = checkNotNull(mGetTasks);
-        this.mUseCaseHandler = checkNotNull(mUseCaseHandler);
         this.mCompleteTask = mCompleteTask;
         this.mActivateTask = mActivateTask;
         this.mClearCompleteTasks = clearCompleteTasks;
@@ -69,18 +63,13 @@ public class TasksPresenter implements TaskContract.Presenter {
     @Override
     public void clearCompletedTasks() {
         Logger.d("");
-        mUseCaseHandler.execute(mClearCompleteTasks, new ClearCompleteTasks.RequestValues(),
-                new UseCase.UseCaseCallback<ClearCompleteTasks.ResponseValue>() {
-                    @Override
-                    public void onSuccess(ClearCompleteTasks.ResponseValue response) {
-                        mTasksView.showCompletedTasksCleared();
-                        loadTasks(false, false);
-                    }
 
-                    @Override
-                    public void onError() {
-                        mTasksView.showLoadingTasksError();
-                    }
+        mClearCompleteTasks.execute(new ClearCompleteTasks.RequestValues())
+                .subscribe(responseValue -> {
+                    mTasksView.showCompletedTasksCleared();
+                    loadTasks(false, false);
+                }, error -> {
+                    mTasksView.showLoadingTasksError();
                 });
     }
 
@@ -103,37 +92,23 @@ public class TasksPresenter implements TaskContract.Presenter {
     @Override
     public void completeTask(@NonNull Task completedTask) {
         checkNotNull(completedTask, "completedTask cannot be null!");
-        mUseCaseHandler.execute(mCompleteTask, new CompleteTask.RequestValues(completedTask.getId()),
-                new UseCase.UseCaseCallback<CompleteTask.ResponseValue>() {
-                    @Override
-                    public void onSuccess(CompleteTask.ResponseValue response) {
-                        mTasksView.showTaskMarkedComplete();
-                        loadTasks(false, false);
-                    }
 
-                    @Override
-                    public void onError() {
-                        mTasksView.showLoadingTasksError();
-                    }
-                });
+        mCompleteTask.execute(new CompleteTask.RequestValues(completedTask.getId()))
+                .subscribe(responseValue -> {
+                    mTasksView.showTaskMarkedComplete();
+                    loadTasks(false, false);
+                }, error -> mTasksView.showLoadingTasksError());
     }
 
     @Override
     public void activateTask(@NonNull Task activeTask) {
         checkNotNull(activeTask, "completedTask cannot be null!");
-        mUseCaseHandler.execute(mActivateTask, new ActivateTask.RequestValues(activeTask.getId()),
-                new UseCase.UseCaseCallback<ActivateTask.ResponseValue>() {
-                    @Override
-                    public void onSuccess(ActivateTask.ResponseValue response) {
-                        mTasksView.showTaskMarkedActive();
-                        loadTasks(false, false);
-                    }
 
-                    @Override
-                    public void onError() {
-                        mTasksView.showLoadingTasksError();
-                    }
-                });
+        mActivateTask.execute(new ActivateTask.RequestValues(activeTask.getId()))
+                .subscribe(responseValue -> {
+                    mTasksView.showTaskMarkedActive();
+                    loadTasks(false, false);
+                }, error -> mTasksView.showLoadingTasksError());
     }
 
 
@@ -142,22 +117,8 @@ public class TasksPresenter implements TaskContract.Presenter {
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
     private void loadTasks(boolean forceUpdate, final boolean showLoadingUI) {
-
-
-        GetTasks.RequestValues values = new GetTasks.RequestValues(forceUpdate, mCurrentFiltering);
-
-        mUseCaseHandler.execute(mGetTasks, values, new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
-            @Override
-            public void onSuccess(GetTasks.ResponseValue response) {
-                List<Task> tasks = response.getTasks();
-                processTask(tasks);
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
+        mGetTasks.execute(new GetTasks.RequestValues(forceUpdate, mCurrentFiltering))
+                .subscribe(responseValue -> processTask(responseValue.getTasks()));
     }
 
     private void processTask(List<Task> tasks) {
