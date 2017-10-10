@@ -9,6 +9,9 @@ import com.amuyu.todomimic.addedittask.domain.usecase.GetTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.SaveTask;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
@@ -20,6 +23,8 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
     @Nullable
     private String mTaskId;
 
+    private CompositeSubscription mSubscriptions;
+
     public AddEditTaskPresenter(@NonNull AddEditTaskContract.View addTaskView,
                                 @NonNull SaveTask saveTask,
                                 @NonNull GetTask getTask,
@@ -30,6 +35,7 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
         this.mTaskId = taskId;
 
         mAddTaskView.setPresenter(this);
+        mSubscriptions = new CompositeSubscription();
     }
 
     @Override
@@ -37,6 +43,11 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
         if (mTaskId != null) {
             populateTask();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        mSubscriptions.clear();
     }
 
     @Override
@@ -61,8 +72,9 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
             throw new RuntimeException("populateTask() was called but task is new.");
         }
 
-        mGetTask.execute(new GetTask.RequestValues(mTaskId))
+        Subscription subscription = mGetTask.execute(new GetTask.RequestValues(mTaskId))
                 .subscribe(responseValue -> showTask(responseValue.getTask()));
+        mSubscriptions.add(subscription);
     }
 
     private void createTask(final String title, final String description) {
@@ -71,10 +83,11 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
             mAddTaskView.showEmptyTaskError();
         } else {
             SaveTask.RequestValues values = new SaveTask.RequestValues(newTask);
-            mSaveTask.execute(values)
+            Subscription subscription = mSaveTask.execute(values)
                     .subscribe(responseValue -> {
                         mAddTaskView.showTasksList();
                     });
+            mSubscriptions.add(subscription);
         }
     }
 
@@ -84,12 +97,13 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
         }
 
         Task newTask = new Task(title ,description, mTaskId);
-        mSaveTask.execute(new SaveTask.RequestValues(newTask))
+        Subscription subscription = mSaveTask.execute(new SaveTask.RequestValues(newTask))
                 .subscribe(responseValue -> {
                     mAddTaskView.showTasksList();
                 }, error -> {
                     showSaveError();
                 });
+        mSubscriptions.add(subscription);
     }
 
     private void showTask(Task task) {

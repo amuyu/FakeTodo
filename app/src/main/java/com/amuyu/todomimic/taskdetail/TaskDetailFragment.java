@@ -102,6 +102,12 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
     }
 
     @Override
+    public void onDestroy() {
+        mPresenter.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
     public void setPresenter(TaskDetailContract.Presenter presenter) {
         mPresenter = presenter;
     }

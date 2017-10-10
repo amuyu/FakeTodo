@@ -15,6 +15,9 @@ import com.amuyu.todomimic.tasks.domain.usecase.GetTasks;
 
 import java.util.List;
 
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TasksPresenter implements TaskContract.Presenter {
@@ -26,6 +29,8 @@ public class TasksPresenter implements TaskContract.Presenter {
     private final ClearCompleteTasks mClearCompleteTasks;
 
     private TasksFilterType mCurrentFiltering = TasksFilterType.ALL_TASKS;
+
+    private CompositeSubscription mSubscriptions;
 
 
     public TasksPresenter(@NonNull TaskContract.View tasksView,
@@ -40,11 +45,17 @@ public class TasksPresenter implements TaskContract.Presenter {
         this.mClearCompleteTasks = clearCompleteTasks;
 
         this.mTasksView.setPresenter(this);
+        mSubscriptions = new CompositeSubscription();
     }
 
     @Override
     public void start() {
         loadTasks(false);
+    }
+
+    @Override
+    public void onDestroy() {
+        mSubscriptions.clear();
     }
 
     @Override
@@ -63,14 +74,14 @@ public class TasksPresenter implements TaskContract.Presenter {
     @Override
     public void clearCompletedTasks() {
         Logger.d("");
-
-        mClearCompleteTasks.execute(new ClearCompleteTasks.RequestValues())
+        Subscription subscription = mClearCompleteTasks.execute(new ClearCompleteTasks.RequestValues())
                 .subscribe(responseValue -> {
                     mTasksView.showCompletedTasksCleared();
                     loadTasks(false, false);
                 }, error -> {
                     mTasksView.showLoadingTasksError();
                 });
+        mSubscriptions.add(subscription);
     }
 
     @Override
@@ -93,22 +104,24 @@ public class TasksPresenter implements TaskContract.Presenter {
     public void completeTask(@NonNull Task completedTask) {
         checkNotNull(completedTask, "completedTask cannot be null!");
 
-        mCompleteTask.execute(new CompleteTask.RequestValues(completedTask.getId()))
+        Subscription subscription = mCompleteTask.execute(new CompleteTask.RequestValues(completedTask.getId()))
                 .subscribe(responseValue -> {
                     mTasksView.showTaskMarkedComplete();
                     loadTasks(false, false);
                 }, error -> mTasksView.showLoadingTasksError());
+        mSubscriptions.add(subscription);
     }
 
     @Override
     public void activateTask(@NonNull Task activeTask) {
         checkNotNull(activeTask, "completedTask cannot be null!");
 
-        mActivateTask.execute(new ActivateTask.RequestValues(activeTask.getId()))
+        Subscription subscription = mActivateTask.execute(new ActivateTask.RequestValues(activeTask.getId()))
                 .subscribe(responseValue -> {
                     mTasksView.showTaskMarkedActive();
                     loadTasks(false, false);
                 }, error -> mTasksView.showLoadingTasksError());
+        mSubscriptions.add(subscription);
     }
 
 
@@ -117,8 +130,9 @@ public class TasksPresenter implements TaskContract.Presenter {
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
     private void loadTasks(boolean forceUpdate, final boolean showLoadingUI) {
-        mGetTasks.execute(new GetTasks.RequestValues(forceUpdate, mCurrentFiltering))
+        Subscription subscription = mGetTasks.execute(new GetTasks.RequestValues(forceUpdate, mCurrentFiltering))
                 .subscribe(responseValue -> processTask(responseValue.getTasks()));
+        mSubscriptions.add(subscription);
     }
 
     private void processTask(List<Task> tasks) {

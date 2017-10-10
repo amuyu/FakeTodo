@@ -123,6 +123,12 @@ public class TasksFragment extends Fragment implements TaskContract.View {
         mPresenter.start();
     }
 
+    @Override
+    public void onDestroy() {
+        mPresenter.onDestroy();
+        super.onDestroy();
+    }
+
     /**
      * Listener for clicks on tasks in the ListView.
      */
