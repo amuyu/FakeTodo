@@ -43,8 +43,8 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$versions.constraintLayout"
     implementation "com.google.guava:guava:$versions.guava"
     implementation "com.amuyu:logger:$versions.logger"
-
-
+    implementation "com.google.firebase:firebase-database:$versions.firebase"
+    implementation "com.google.firebase:firebase-auth:$versions.firebase"
 
     testImplementation 'junit:junit:4.12'
 
@@ -52,3 +52,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+
+apply plugin: 'com.google.gms.google-services'
