@@ -29,16 +29,19 @@ import java.util.UUID;
  */
 public final class Task {
 
-    @NonNull
-    private final String mId;
+    private String mId;
 
     @Nullable
-    private final String mTitle;
+    private String mTitle;
 
     @Nullable
-    private final String mDescription;
+    private String mDescription;
 
-    private final boolean mCompleted;
+    private boolean mCompleted;
+
+    public Task() {
+        // Default constructor required for calls to DataSnapshot.getValue(Task.class)
+    }
 
     /**
      * Use this constructor to create a new active Task.
@@ -146,4 +149,24 @@ public final class Task {
     public String toString() {
         return "Task with title " + mTitle;
     }
+
+    public void setId(String mId) {
+        this.mId = mId;
+    }
+
+
+    public void setTitle(@Nullable String mTitle) {
+        this.mTitle = mTitle;
+    }
+
+    public void setDescription(@Nullable String mDescription) {
+        this.mDescription = mDescription;
+    }
+
+
+    public void setCompleted(boolean mCompleted) {
+        this.mCompleted = mCompleted;
+    }
+
+
 }
