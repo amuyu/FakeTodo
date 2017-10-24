@@ -1,14 +1,19 @@
 package com.amuyu.todomimic.tasks.domain.usecase;
 
+import android.support.annotation.NonNull;
+
 import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.data.source.TasksRepository;
+
+import javax.inject.Inject;
 
 
 public class ClearCompleteTasks extends UseCase<ClearCompleteTasks.RequestValues, ClearCompleteTasks.ResponseValue> {
 
     private final TasksRepository mTasksRepository;
 
-    public ClearCompleteTasks(TasksRepository tasksRepository) {
+    @Inject
+    public ClearCompleteTasks(@NonNull TasksRepository tasksRepository) {
         this.mTasksRepository = tasksRepository;
     }
 

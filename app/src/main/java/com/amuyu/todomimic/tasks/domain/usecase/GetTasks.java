@@ -13,6 +13,8 @@ import com.amuyu.todomimic.tasks.domain.model.Task;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseValue> {
@@ -20,6 +22,7 @@ public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseV
     private final TasksRepository mTasksRepository;
     private final FilterFactory mFilterFactory;
 
+    @Inject
     public GetTasks(@NonNull TasksRepository tasksRepository, FilterFactory filterFactory) {
         this.mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null!");
         this.mFilterFactory = filterFactory;

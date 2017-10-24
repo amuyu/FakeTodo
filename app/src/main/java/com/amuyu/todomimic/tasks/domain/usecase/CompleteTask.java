@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.data.source.TasksRepository;
 
+import javax.inject.Inject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
@@ -12,6 +14,7 @@ public class CompleteTask extends UseCase<CompleteTask.RequestValues, CompleteTa
 
     private final TasksRepository mTasksRepository;
 
+    @Inject
     public CompleteTask(@NonNull TasksRepository tasksRepository) {
         this.mTasksRepository = checkNotNull(tasksRepository,"tasksRepository cannot be null");
     }

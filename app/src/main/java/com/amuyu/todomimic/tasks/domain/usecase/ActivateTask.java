@@ -6,13 +6,16 @@ import android.support.annotation.NonNull;
 import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.data.source.TasksRepository;
 
+import javax.inject.Inject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ActivateTask extends UseCase<ActivateTask.RequestValues, ActivateTask.ResponseValue> {
 
     private final TasksRepository mTasksRepository;
 
-    public ActivateTask(TasksRepository tasksRepository) {
+    @Inject
+    public ActivateTask(@NonNull TasksRepository tasksRepository) {
         this.mTasksRepository = tasksRepository;
     }
 

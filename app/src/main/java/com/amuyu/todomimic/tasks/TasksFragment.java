@@ -21,13 +21,17 @@ import android.widget.TextView;
 
 import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.R;
+import com.amuyu.todomimic.TodoApp;
 import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
+import com.amuyu.todomimic.di.modules.TasksModule;
 import com.amuyu.todomimic.taskdetail.TaskDetailActivity;
 import com.amuyu.todomimic.tasks.adapter.TasksAdapter;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -43,7 +47,7 @@ public class TasksFragment extends Fragment implements TaskContract.View {
     private TextView mFilteringLabelView;
 
     private TasksAdapter mListAdapter;
-    private TaskContract.Presenter mPresenter;
+    @Inject public TaskContract.Presenter mPresenter;
 
     public TasksFragment() {
     }
@@ -55,7 +59,15 @@ public class TasksFragment extends Fragment implements TaskContract.View {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initializeDagger();
         mListAdapter = new TasksAdapter(new ArrayList<Task>(), mItemListener);
+    }
+
+    private void initializeDagger() {
+        TodoApp app = (TodoApp)getActivity().getApplication();
+        app.getMainComponent().tasksComponent(new TasksModule(this))
+                .inject(this);
     }
 
     @Nullable
