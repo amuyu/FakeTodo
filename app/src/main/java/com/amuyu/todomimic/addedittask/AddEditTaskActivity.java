@@ -7,15 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.amuyu.todomimic.R;
-import com.amuyu.todomimic.data.Injection;
 import com.amuyu.todomimic.util.ActivityUtils;
 
 
 public class AddEditTaskActivity extends AppCompatActivity {
 
     public static final int REQUEST_ADD_TASK = 1;
-
-    private AddEditTaskContract.Presenter mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,10 +47,6 @@ public class AddEditTaskActivity extends AppCompatActivity {
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), fragment, R.id.contentFrame);
         }
 
-        mPresenter = new AddEditTaskPresenter(fragment,
-                Injection.provideSaveTask(this),
-                Injection.provideGetTask(this),
-                Injection.provideUseCaseHandler(), taskId);
     }
 
     @Override

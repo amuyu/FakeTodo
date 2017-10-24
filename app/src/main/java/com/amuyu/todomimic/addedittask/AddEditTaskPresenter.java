@@ -11,6 +11,8 @@ import com.amuyu.todomimic.addedittask.domain.usecase.GetTask;
 import com.amuyu.todomimic.addedittask.domain.usecase.SaveTask;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
+import javax.inject.Inject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
@@ -23,11 +25,12 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
     @Nullable
     private String mTaskId;
 
+    @Inject
     public AddEditTaskPresenter(@NonNull AddEditTaskContract.View addTaskView,
                                 @NonNull SaveTask saveTask,
                                 @NonNull GetTask getTask,
                                 @NonNull UseCaseHandler useCaseHandler,
-                                @NonNull String taskId) {
+                                @Nullable String taskId) {
         this.mAddTaskView = checkNotNull(addTaskView);
         this.mSaveTask = checkNotNull(saveTask);
         this.mGetTask = checkNotNull(getTask);

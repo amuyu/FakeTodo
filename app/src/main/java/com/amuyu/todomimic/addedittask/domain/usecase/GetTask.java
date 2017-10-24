@@ -7,6 +7,8 @@ import com.amuyu.todomimic.data.source.TasksDataSource;
 import com.amuyu.todomimic.data.source.TasksRepository;
 import com.amuyu.todomimic.tasks.domain.model.Task;
 
+import javax.inject.Inject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
@@ -14,6 +16,7 @@ public class GetTask extends UseCase<GetTask.RequestValues, GetTask.ResponseValu
 
     private final TasksRepository mTasksRepository;
 
+    @Inject
     public GetTask(@NonNull TasksRepository tasksRepository) {
         mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null!");
     }

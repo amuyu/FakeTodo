@@ -13,7 +13,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.amuyu.todomimic.R;
+import com.amuyu.todomimic.TodoApp;
+import com.amuyu.todomimic.di.modules.AddEditTaskModule;
 import com.amuyu.todomimic.tasks.domain.model.Task;
+
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -22,12 +26,26 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
 
     public static final String ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID";
 
-    private AddEditTaskContract.Presenter mPresenter;
+    @Inject public AddEditTaskContract.Presenter mPresenter;
     private TextView mTitle;
     private TextView mDescription;
 
     public static AddEditTaskFragment newInstance() {
         return new AddEditTaskFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initializeDagger();
+    }
+
+    private void initializeDagger() {
+        TodoApp app = (TodoApp)getActivity().getApplication();
+        String taskId = null;
+        if(getArguments()!= null) taskId = getArguments().getString(ARGUMENT_EDIT_TASK_ID);
+        app.getMainComponent().addEditTaskComponent(new AddEditTaskModule(this, taskId))
+                .inject(this);
     }
 
     @Nullable
