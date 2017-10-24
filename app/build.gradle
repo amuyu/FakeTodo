@@ -44,7 +44,9 @@ dependencies {
     implementation "com.google.guava:guava:$versions.guava"
     implementation "com.amuyu:logger:$versions.logger"
 
-
+    implementation "com.google.dagger:dagger:$versions.dagger"
+    annotationProcessor "com.google.dagger:dagger-compiler:$versions.dagger"
+    provided 'org.glassfish:javax.annotation:10.0-b28'
 
     testImplementation 'junit:junit:4.12'
 
