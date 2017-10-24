@@ -6,13 +6,15 @@ import android.support.annotation.NonNull;
 import com.amuyu.todomimic.UseCase;
 import com.amuyu.todomimic.data.source.TasksRepository;
 
+import javax.inject.Inject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DeleteTask extends UseCase<DeleteTask.RequestValues, DeleteTask.ResponseValue> {
 
     private final TasksRepository mTasksRepository;
 
-    public DeleteTask(TasksRepository tasksRepository) {
+    @Inject public DeleteTask(TasksRepository tasksRepository) {
         this.mTasksRepository = tasksRepository;
     }
 

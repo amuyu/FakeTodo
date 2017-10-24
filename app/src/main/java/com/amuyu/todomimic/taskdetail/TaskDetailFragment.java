@@ -20,8 +20,12 @@ import android.widget.TextView;
 
 import com.amuyu.logger.Logger;
 import com.amuyu.todomimic.R;
+import com.amuyu.todomimic.TodoApp;
 import com.amuyu.todomimic.addedittask.AddEditTaskActivity;
 import com.amuyu.todomimic.addedittask.AddEditTaskFragment;
+import com.amuyu.todomimic.di.modules.TaskDetailModule;
+
+import javax.inject.Inject;
 
 
 public class TaskDetailFragment extends Fragment implements TaskDetailContract.View {
@@ -36,7 +40,7 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
     private TextView mDetailDescription;
     private CheckBox mDetailCompleteStatus;
 
-    private TaskDetailContract.Presenter mPresenter;
+    @Inject public TaskDetailContract.Presenter mPresenter;
 
     public static TaskDetailFragment newInstance(@Nullable String taskId) {
         Bundle args = new Bundle();
@@ -44,6 +48,19 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
         TaskDetailFragment fragment = new TaskDetailFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initializeDagger();
+    }
+
+    private void initializeDagger() {
+        TodoApp app = (TodoApp)getActivity().getApplication();
+        String taskId = null;
+        if (getArguments() != null) taskId = getArguments().getString(ARGUMENT_TASK_ID);
+        app.getMainComponent().taskDetailComponent(new TaskDetailModule(this, taskId)).inject(this);
     }
 
     @Nullable

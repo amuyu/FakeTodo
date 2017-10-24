@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.amuyu.todomimic.R;
-import com.amuyu.todomimic.data.Injection;
 import com.amuyu.todomimic.util.ActivityUtils;
 
 
@@ -15,7 +14,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_TASK_ID = "TASK_ID";
 
-    private TaskDetailContract.Presenter mPresenter;
+//    private TaskDetailContract.Presenter mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,12 +41,12 @@ public class TaskDetailActivity extends AppCompatActivity {
                     taskDetailFragment, R.id.contentFrame);
         }
 
-        mPresenter = new TaskDetailPresenter(taskDetailFragment,
-                                            Injection.provideUseCaseHandler(),
-                                            Injection.provideGetTask(this),
-                                            Injection.provideCompleteTask(this),
-                                            Injection.provideActivateTask(this),
-                                            Injection.provideDeleteTask(this), taskId);
+//        mPresenter = new TaskDetailPresenter(taskDetailFragment,
+//                                            Injection.provideUseCaseHandler(),
+//                                            Injection.provideGetTask(this),
+//                                            Injection.provideCompleteTask(this),
+//                                            Injection.provideActivateTask(this),
+//                                            Injection.provideDeleteTask(this), taskId);
     }
 
     @Override

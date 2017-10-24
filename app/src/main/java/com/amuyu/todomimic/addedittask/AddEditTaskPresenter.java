@@ -36,8 +36,6 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter {
         this.mGetTask = checkNotNull(getTask);
         this.mUseCaseHandler = useCaseHandler;
         this.mTaskId = taskId;
-
-        mAddTaskView.setPresenter(this);
     }
 
     @Override

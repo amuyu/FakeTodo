@@ -14,6 +14,8 @@ import com.amuyu.todomimic.tasks.domain.usecase.ActivateTask;
 import com.amuyu.todomimic.tasks.domain.usecase.CompleteTask;
 import com.google.common.base.Strings;
 
+import javax.inject.Inject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TaskDetailPresenter implements TaskDetailContract.Presenter {
@@ -28,7 +30,7 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
     @Nullable
     private String mTaskId;
 
-    public TaskDetailPresenter(@NonNull TaskDetailContract.View taskDetailView,
+    @Inject public TaskDetailPresenter(@NonNull TaskDetailContract.View taskDetailView,
                                @NonNull UseCaseHandler useCaseHandler,
                                @NonNull GetTask getTask,
                                @NonNull CompleteTask completeTask,
@@ -42,8 +44,6 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
         this.mActivateTask = activateTask;
         this.mDeleteTask = mDeleteTask;
         this.mTaskId = taskId;
-
-        mTaskDetailView.setPresenter(this);
     }
 
 

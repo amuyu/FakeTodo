@@ -47,8 +47,6 @@ public class TasksPresenter implements TaskContract.Presenter {
         this.mCompleteTask = mCompleteTask;
         this.mActivateTask = mActivateTask;
         this.mClearCompleteTasks = clearCompleteTasks;
-
-//        this.mTasksView.setPresenter(this);
     }
 
     @Override
