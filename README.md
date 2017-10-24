@@ -8,3 +8,4 @@ Clean Architure Study Project
 |---|---|
 |rxjava|usecase 패턴에 rxjava 적용|
 |firebase-database|firebase database 사용|
+|dagger|Dagger2 사용|
